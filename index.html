@@ -197,6 +197,59 @@
             transform: translateY(0) scale(1);
             pointer-events: auto;
         }
+        #chatbot-api-key-container {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        #chatbot-api-key-container label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        #api-key-input {
+            width: calc(100% - 4.5rem); /* Full width minus button width */
+            padding: 0.6rem 0.9rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem 0 0 0.5rem; /* rounded-lg on left */
+            font-size: 0.9rem;
+            margin-right: -1px; /* Overlap borders */
+        }
+        #api-key-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 2px rgba(99, 179, 237, 0.3);
+            z-index: 1;
+            position: relative;
+        }
+        #save-api-key-button {
+            background-color: var(--accent-primary);
+            color: white;
+            border: 1px solid var(--accent-primary);
+            padding: 0.6rem 1rem;
+            border-radius: 0 0.5rem 0.5rem 0; /* rounded-lg on right */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 0.9rem;
+        }
+        #save-api-key-button:hover {
+            background-color: var(--accent-primary-darker);
+        }
+        #api-key-status {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            color: var(--text-secondary);
+        }
+        #chatbot-header, #chatbot-messages, #chatbot-input-container {
+            display: none; /* Initially hidden if no API key */
+        }
+        #chatbot-header.active, #chatbot-messages.active, #chatbot-input-container.active {
+            display: flex; /* Or block/flex depending on element */
+        }
+        #chatbot-messages.active { display: flex; } /* Specific for messages */
+        #chatbot-input-container.active { display: flex; } /* Specific for input container */
+        #chatbot-header.active { display: flex; } /* Specific for header */
+
         #chatbot-header {
             background-color: var(--accent-primary);
             color: white;
@@ -311,8 +364,16 @@
     </div>
 
     <div id="chatbot-window">
+        <div id="chatbot-api-key-container">
+            <label for="api-key-input">Enter Gemini API Key:</label>
+            <div style="display: flex;">
+                <input type="password" id="api-key-input" placeholder="Your Gemini API Key">
+                <button id="save-api-key-button">Save</button>
+            </div>
+            <p id="api-key-status"></p>
+        </div>
         <div id="chatbot-header">
-            <span>Resume Assistant</span>
+            <span>mini Henry</span>
             <button id="chatbot-close" title="Close Chat">&times;</button>
         </div>
         <div id="chatbot-messages">
@@ -442,8 +503,8 @@
     </footer>
 
     <script>
-        const GEMINI_API_KEY = "AIzaSyAvENmoMApAQD_GziHtIvN5Y_p8tZyi0B0"; // Your API Key
-        const GEMINI_MODEL_NAME = "gemini-1.5-flash-latest"; // Using the specified model
+        let currentGeminiApiKey = null; // Will hold the API key
+        const GEMINI_MODEL_NAME = "gemini-2.5-flash-preview-04-17"; // Using the specified model
 
         // --- Resume Data (Updated Contact Info) ---
         const resumeData = { 
@@ -644,24 +705,79 @@
             const fab = document.getElementById('chatbot-fab');
             const windowEl = document.getElementById('chatbot-window');
             const closeButton = document.getElementById('chatbot-close');
+            
+            const apiKeyContainer = document.getElementById('chatbot-api-key-container');
+            const apiKeyInput = document.getElementById('api-key-input');
+            const saveApiKeyButton = document.getElementById('save-api-key-button');
+            const apiKeyStatus = document.getElementById('api-key-status');
+
+            const chatHeader = document.getElementById('chatbot-header');
             const messagesContainer = document.getElementById('chatbot-messages');
+            const inputContainer = document.getElementById('chatbot-input-container');
             const inputEl = document.getElementById('chatbot-input');
             const sendButton = document.getElementById('chatbot-send');
 
-            // Add initial bot message to history and display
-            const initialBotMessage = "Hello! How can I help you with Henry's resume today?";
-            appendMessage(initialBotMessage, 'bot');
-            chatHistory.push({ role: 'model', parts: [{ text: initialBotMessage }] });
-
-
             fab.addEventListener('click', () => windowEl.classList.toggle('active'));
-            closeButton.addEventListener('click', () => windowEl.classList.remove('active'));
+            closeButton.addEventListener('click', () => {
+                windowEl.classList.remove('active');
+            });
+
+            function showApiKeyPrompt() {
+                apiKeyContainer.style.display = 'block';
+                chatHeader.style.display = 'none';
+                messagesContainer.style.display = 'none';
+                inputContainer.style.display = 'none';
+                apiKeyStatus.textContent = 'Please enter your Gemini API key to use the chatbot.';
+            }
+
+            function showChatInterface() {
+                apiKeyContainer.style.display = 'none';
+                chatHeader.style.display = 'flex'; // Assuming header is flex
+                messagesContainer.style.display = 'flex'; // Assuming messages is flex
+                inputContainer.style.display = 'flex'; // Assuming input container is flex
+                
+                // Add initial bot message if it's the first time after key is set
+                if (chatHistory.length === 0 && messagesContainer.children.length === 0) {
+                    const initialBotMessage = "Hello! How can I help you with Henry's resume today?";
+                    appendMessage(initialBotMessage, 'bot');
+                    chatHistory.push({ role: 'model', parts: [{ text: initialBotMessage }] });
+                }
+            }
+
+            saveApiKeyButton.addEventListener('click', () => {
+                const key = apiKeyInput.value.trim();
+                if (key) {
+                    currentGeminiApiKey = key;
+                    localStorage.setItem('geminiApiKey', key);
+                    apiKeyStatus.textContent = 'API Key saved.';
+                    apiKeyInput.value = ''; // Clear the input
+                    showChatInterface();
+                } else {
+                    apiKeyStatus.textContent = 'Please enter a valid API Key.';
+                }
+            });
+
+            // Try to load API key from localStorage
+            const storedKey = localStorage.getItem('geminiApiKey');
+            if (storedKey) {
+                currentGeminiApiKey = storedKey;
+                apiKeyStatus.textContent = 'Using saved API Key.';
+                showChatInterface();
+            } else {
+                showApiKeyPrompt();
+            }
+
             sendButton.addEventListener('click', sendMessage);
             inputEl.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') sendMessage();
             });
 
             function sendMessage() {
+                if (!currentGeminiApiKey) {
+                    appendMessage("Please set your API key first.", "error");
+                    showApiKeyPrompt(); // Re-show prompt if key somehow became null
+                    return;
+                }
                 const messageText = inputEl.value.trim();
                 if (!messageText) return;
 
@@ -674,7 +790,8 @@
             function appendMessage(text, type, isThinking = false) {
                 const messageDiv = document.createElement('div');
                 messageDiv.classList.add('chat-message', type);
-                if (isThinking) messageDiv.classList.add('thinking'); // Special class for "Thinking..."
+                if (isThinking) messageDiv.classList.add('thinking');
+                if (type === 'error') messageDiv.classList.add('error');
                 
                 let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); 
                 formattedText = formattedText.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-[var(--accent-primary)] hover:underline">$1</a>');
@@ -687,7 +804,12 @@
             }
 
             async function getBotResponse(userMessage) {
-                // Display "Thinking..." message and add to history for temporary display
+                if (!currentGeminiApiKey) {
+                    // This check is also in sendMessage, but good for robustness
+                    appendMessage("API Key is not set. Please provide it in the settings.", "error");
+                    showApiKeyPrompt();
+                    return;
+                }
                 appendMessage("Thinking...", "bot", true); 
                 const thinkingMessageEl = messagesContainer.lastChild;
 
@@ -716,10 +838,10 @@
                     {
                         role: "user", // Gemini API expects alternating user/model roles. Start with user for system prompt.
                         parts: [{
-                            text: `You’re Henry Gilbert’s feisty digital twin—sharp, unapologetic, and allergic to fluff. 
+                            text: `You're Henry Gilbert's feisty digital twin—sharp, unapologetic, and allergic to fluff. 
                             Answer questions with confident swagger and a dash of playful disdain. 
-                            If the asker clearly missed what’s on the résumé, call it out (“reading is hard, huh?”) before giving the answer. 
-                            If the info isn’t in the résumé, just say so—no guessing or padding.
+                            If the asker clearly missed what's on the résumé, call it out ("reading is hard, huh?") before giving the answer. 
+                            If the info isn't in the résumé, just say so—no guessing or padding.
 
                             Keep replies concise, direct, and brimming with big-balls energy.
 
@@ -734,15 +856,15 @@
                         role: "model",
                         parts: [{ text: "Okay, I understand. I will answer questions based on Henry Gilbert's resume information provided." }]
                     },
-                    // Actual chat history
-                    ...chatHistory.slice(0, -1), // Add all history except the last user message (which is the current one)
+                    // Actual chat history (make sure not to send initial prompt if it's the very first turn)
+                    ...chatHistory.slice(chatHistory[0]?.parts[0]?.text === "Hello! How can I help you with Henry's resume today?" && chatHistory.length > 1 ? 1 : 0, -1),
                     // Current user question
                     { role: "user", parts: [{ text: userMessage }] }
                 ];
 
 
                 try {
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL_NAME}:generateContent?key=${GEMINI_API_KEY}`, {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL_NAME}:generateContent?key=${currentGeminiApiKey}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -797,4 +919,3 @@
     </script>
 </body>
 </html>
-
