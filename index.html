@@ -7,516 +7,547 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* Custom Styles */
+        /* Custom Styles - Light Techy & Minimal Theme */
+        :root {
+            --main-bg: #FFFFFF;
+            --text-primary: #2D3748;
+            --text-secondary: #718096;
+            --accent-primary: #63B3ED;
+            --accent-primary-darker: #3182CE;
+            --card-bg: #F7FAFC;
+            --border-color: #E2E8F0;
+            --header-bg: rgba(255, 255, 255, 0.85);
+            --shadow-color: rgba(0, 0, 0, 0.07);
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #1a202c; /* Dark gray background */
-            color: #e2e8f0; /* Light gray text */
+            background-color: var(--main-bg);
+            color: var(--text-primary);
+            line-height: 1.7;
         }
 
-        /* Accent color */
-        :root {
-            --accent-color: #38bdf8; /* Sky Blue 500 */
-            --accent-color-darker: #0ea5e9; /* Sky Blue 600 */
-            --card-bg: #2d3748; /* Gray 800 */
-            --border-color: #4a5568; /* Gray 600 */
-        }
-
-        /* Smooth scrolling */
         html {
             scroll-behavior: smooth;
         }
 
-        /* Navigation active state */
-        .nav-link.active {
-            color: var(--accent-color);
-            font-weight: 600;
+        /* Navigation */
+        .nav-link { color: var(--text-secondary); transition: color 0.3s ease; }
+        .nav-link.active { color: var(--accent-primary); font-weight: 600; }
+        .nav-link:hover { color: var(--accent-primary); }
+
+        /* Header styling */
+        header { box-shadow: 0 2px 4px var(--shadow-color); }
+        .header-name-link { color: var(--text-primary); }
+        .header-name-link span { color: var(--accent-primary); }
+
+        /* Main content sections stacking context */
+        main > section {
+            position: relative;
+            z-index: 10; /* Ensure sections are above any fixed background elements */
+            background-color: var(--main-bg);
         }
-        .nav-link:hover {
-            color: var(--accent-color);
-        }
+        main > section.bg-section-card-bg { background-color: var(--card-bg); }
 
         /* Section headings */
         .section-heading {
-            color: var(--accent-color);
-            font-weight: 700;
-            margin-bottom: 1.5rem; /* mb-6 */
-            text-align: center;
+            color: var(--text-primary); font-weight: 800; margin-bottom: 2.5rem;
+            text-align: center; font-size: 2.25rem; position: relative;
+        }
+        .section-heading .accent-text { color: var(--accent-primary); }
+        .section-heading::after {
+            content: ''; display: block; width: 70px; height: 3px;
+            background: var(--accent-primary); margin: 0.75rem auto 0; border-radius: 2px;
         }
 
         /* Card styling */
         .content-card {
-            background-color: var(--card-bg);
-            border-radius: 0.75rem; /* rounded-xl */
-            padding: 1.5rem; /* p-6 */
+            background-color: var(--main-bg); border-radius: 0.75rem; padding: 1.75rem;
             border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px -1px var(--shadow-color), 0 2px 4px -1px rgba(0,0,0,0.06);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         .content-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1), 0 0 0 3px var(--accent-color);
+            box-shadow: 0 10px 15px -3px var(--shadow-color), 0 4px 6px -2px rgba(0,0,0,0.05);
         }
+        section.bg-section-card-bg .content-card { background-color: var(--main-bg); }
 
         /* Timeline specific styles */
-        .timeline {
-            position: relative;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        .timeline { position: relative; max-width: 900px; margin: 0 auto; }
         .timeline::after {
-            content: '';
-            position: absolute;
-            width: 6px;
-            background-color: var(--accent-color);
-            top: 0;
-            bottom: 0;
-            left: 50%;
-            margin-left: -3px;
-            border-radius: 3px;
+            content: ''; position: absolute; width: 3px; background-color: var(--border-color);
+            top: 0; bottom: 0; left: 50%; margin-left: -1.5px; border-radius: 3px;
         }
-        .timeline-container {
-            padding: 10px 40px;
-            position: relative;
-            background-color: inherit;
-            width: 50%;
-        }
+        .timeline-container { padding: 10px 40px; position: relative; background-color: inherit; width: 50%; }
         .timeline-container::after {
-            content: '';
-            position: absolute;
-            width: 25px;
-            height: 25px;
-            right: -12px; /* Adjusted for dot centering */
-            background-color: #1a202c; /* Body background */
-            border: 4px solid var(--accent-color);
-            top: 15px;
-            border-radius: 50%;
-            z-index: 1;
+            content: ''; position: absolute; width: 18px; height: 18px; right: -9px;
+            background-color: var(--main-bg); border: 4px solid var(--accent-primary);
+            top: 20px; border-radius: 50%; z-index: 1;
+            transition: transform 0.3s ease, background-color 0.3s ease;
         }
-        .timeline-left {
-            left: 0;
-        }
-        .timeline-right {
-            left: 50%;
-        }
-        .timeline-right::after {
-            left: -13px; /* Adjusted for dot centering */
-        }
+        .timeline-container:hover::after { transform: scale(1.2); background-color: var(--accent-primary); }
+        .timeline-left { left: 0; }
+        .timeline-right { left: 50%; }
+        .timeline-right::after { left: -9px; }
         .timeline-content {
-            padding: 20px 30px;
-            background-color: var(--card-bg);
-            position: relative;
-            border-radius: 0.5rem; /* rounded-lg */
-            border: 1px solid var(--border-color);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            padding: 1.5rem 1.75rem; background-color: var(--main-bg);
+            border: 1px solid var(--border-color); border-radius: 0.5rem; position: relative;
+            box-shadow: 0 3px 5px var(--shadow-color);
+            transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
         }
         .timeline-content:hover {
-            transform: scale(1.02);
-            box-shadow: 0 8px 25px rgba(56, 189, 248, 0.3); /* Shadow with accent color */
+            border-color: var(--accent-primary); transform: translateY(-3px);
+            box-shadow: 0 6px 10px rgba(99, 179, 237, 0.2);
         }
-        .timeline-content h3 {
-            color: var(--accent-color);
-        }
-        .timeline-content .date {
-            font-size: 0.875rem; /* text-sm */
-            color: #a0aec0; /* Gray 500 */
-            margin-bottom: 0.5rem;
-        }
+        .timeline-content h3 { color: var(--accent-primary); font-weight: 700; }
+        .timeline-content .company { color: var(--text-primary); font-weight: 500; }
+        .timeline-content .date { font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.75rem; }
+        .timeline-content ul li { color: var(--text-secondary); }
 
-        /* Responsive timeline */
         @media screen and (max-width: 768px) {
-            .timeline::after {
-                left: 31px;
-            }
-            .timeline-container {
-                width: 100%;
-                padding-left: 70px;
-                padding-right: 25px;
-            }
-            .timeline-container::before {
-                left: 60px;
-                border: medium solid white;
-                border-width: 10px 10px 10px 0;
-                border-color: transparent white transparent transparent;
-            }
-            .timeline-left::after, .timeline-right::after {
-                left: 18px; /* Adjusted for dot centering */
-            }
-            .timeline-right {
-                left: 0%;
-            }
+            .timeline::after { left: 20px; }
+            .timeline-container { width: 100%; padding-left: 55px; padding-right: 15px; }
+            .timeline-left::after, .timeline-right::after { left: 11px; }
+            .timeline-right { left: 0%; }
+            .section-heading { font-size: 1.75rem; }
         }
 
         /* Preloader styles */
         #preloader {
-            position: fixed;
-            left: 0;
-            top: 0;
-            z-index: 99999;
-            width: 100%;
-            height: 100%;
-            overflow: visible;
-            background: #1a202c; /* Dark background */
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            position: fixed; left: 0; top: 0; z-index: 99999; width: 100%; height: 100%;
+            overflow: visible; background: var(--main-bg); display: flex;
+            justify-content: center; align-items: center;
         }
-        .loader-dots span {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--accent-color);
-            margin: 0 5px;
-            animation: loaderDots 1.4s infinite ease-in-out both;
+        .loader-pulse {
+            width: 12px; height: 12px; border-radius: 50%; background: var(--accent-primary);
+            animation: pulse 1.5s infinite ease-in-out;
         }
-        .loader-dots span:nth-child(1) { animation-delay: -0.32s; }
-        .loader-dots span:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes loaderDots {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1.0); }
+        @keyframes pulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 1; }
         }
 
         /* Scroll-triggered animations */
-        .fade-in-section {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        .fade-in-up-section {
+            opacity: 0; transform: translateY(40px);
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
         }
-        .fade-in-section.is-visible {
+        .fade-in-up-section.is-visible { opacity: 1; transform: translateY(0); }
+
+        /* Animated hero text */
+        .anime-letter { display: inline-block; opacity: 0; transform: translateY(20px); }
+        
+        /* Publication links */
+        #publications .content-card a {
+            color: var(--accent-primary); text-decoration: none; font-weight: 500;
+            border-bottom: 1px solid transparent; transition: border-color 0.3s ease;
+        }
+        #publications .content-card a:hover { border-bottom-color: var(--accent-primary); }
+
+        /* Chatbot Styles */
+        #chatbot-fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: var(--accent-primary);
+            color: white;
+            width: 3.5rem; /* 56px */
+            height: 3.5rem; /* 56px */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem; /* 24px */
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            z-index: 1000; /* Above other content */
+        }
+        #chatbot-fab:hover {
+            background-color: var(--accent-primary-darker);
+            transform: scale(1.1);
+        }
+        #chatbot-window {
+            position: fixed;
+            bottom: 6.5rem; /* FAB height + 1rem margin */
+            right: 2rem;
+            width: 90%;
+            max-width: 380px;
+            height: 70vh;
+            max-height: 500px;
+            background-color: var(--main-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+            z-index: 999; /* Below FAB when closed, above when open */
+        }
+        #chatbot-window.active {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+        #chatbot-header {
+            background-color: var(--accent-primary);
+            color: white;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top-left-radius: 0.75rem;
+            border-top-right-radius: 0.75rem;
+        }
+        #chatbot-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+        }
+        #chatbot-messages {
+            flex-grow: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .chat-message {
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.5rem; /* rounded-lg */
+            max-width: 80%;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+        .chat-message.user {
+            background-color: var(--accent-primary);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 0.125rem; /* Slight shape change for user */
+        }
+        .chat-message.bot {
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            align-self: flex-start;
+            border: 1px solid var(--border-color);
+            border-bottom-left-radius: 0.125rem; /* Slight shape change for bot */
+        }
+        .chat-message.error {
+            background-color: #FED7D7; /* Red-200 */
+            color: #C53030; /* Red-700 */
+            align-self: flex-start;
+            border: 1px solid #FC8181; /* Red-400 */
+        }
+        .chat-message.thinking { /* Style for the "Thinking..." message */
+            background-color: var(--card-bg);
+            color: var(--text-secondary); /* More subtle color */
+            align-self: flex-start;
+            font-style: italic;
+            border: 1px solid var(--border-color);
+        }
+        #chatbot-input-container {
+            display: flex;
+            padding: 0.75rem;
+            border-top: 1px solid var(--border-color);
+        }
+        #chatbot-input {
+            flex-grow: 1;
+            padding: 0.6rem 0.9rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem; /* rounded-lg */
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+        }
+        #chatbot-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 2px rgba(99, 179, 237, 0.3);
+        }
+        #chatbot-send {
+            background-color: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1rem;
+            border-radius: 0.5rem; /* rounded-lg */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #chatbot-send:hover {
+            background-color: var(--accent-primary-darker);
+        }
+        @media screen and (max-width: 420px) { /* Adjust chatbot for smaller screens */
+            #chatbot-window {
+                right: 1rem;
+                bottom: 5.5rem;
+                max-width: calc(100% - 2rem);
+            }
+            #chatbot-fab {
+                bottom: 1rem;
+                right: 1rem;
+            }
         }
 
-        /* Mobile menu button */
-        #menu-button svg {
-            pointer-events: none; /* Allow clicks to pass through SVG to button */
-        }
-        
     </style>
 </head>
 <body class="antialiased">
 
     <div id="preloader">
-        <div class="loader-dots">
-            <span></span>
-            <span></span>
-            <span></span>
+        <div class="loader-pulse"></div>
+    </div>
+
+    <div id="chatbot-fab" title="Chat with Resume Bot">
+        <i class="fas fa-comments"></i>
+    </div>
+
+    <div id="chatbot-window">
+        <div id="chatbot-header">
+            <span>Resume Assistant</span>
+            <button id="chatbot-close" title="Close Chat">&times;</button>
+        </div>
+        <div id="chatbot-messages">
+            </div>
+        <div id="chatbot-input-container">
+            <input type="text" id="chatbot-input" placeholder="Ask a question...">
+            <button id="chatbot-send">Send</button>
         </div>
     </div>
 
-    <header class="bg-gray-900/80 backdrop-blur-md shadow-lg fixed top-0 left-0 right-0 z-50">
+
+    <header class="bg-[var(--header-bg)] backdrop-blur-md fixed top-0 left-0 right-0 z-50 border-b border-[var(--border-color)]">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
+            <div class="flex items-center justify-between h-16">
                 <div class="flex-shrink-0">
-                    <a href="#" class="text-2xl font-bold text-white">Henry Gilbert, <span class="text-[var(--accent-color)]">PhD</span></a>
+                    <a href="#" class="header-name-link text-xl font-bold">Henry Gilbert, <span class="text-[var(--accent-primary)]">PhD</span></a>
                 </div>
-
-                <nav class="hidden md:flex space-x-6">
-                    <a href="#about" class="nav-link text-gray-300 hover:text-[var(--accent-color)] px-3 py-2 rounded-md text-sm font-medium">About</a>
-                    <a href="#experience" class="nav-link text-gray-300 hover:text-[var(--accent-color)] px-3 py-2 rounded-md text-sm font-medium">Experience</a>
-                    <a href="#education" class="nav-link text-gray-300 hover:text-[var(--accent-color)] px-3 py-2 rounded-md text-sm font-medium">Education</a>
-                    <a href="#skills" class="nav-link text-gray-300 hover:text-[var(--accent-color)] px-3 py-2 rounded-md text-sm font-medium">Skills</a>
-                    <a href="#publications" class="nav-link text-gray-300 hover:text-[var(--accent-color)] px-3 py-2 rounded-md text-sm font-medium">Publications</a>
-                    <a href="#contact" class="nav-link text-gray-300 hover:text-[var(--accent-color)] px-3 py-2 rounded-md text-sm font-medium">Contact</a>
+                <nav class="hidden md:flex space-x-5">
+                    <a href="#about" class="nav-link px-3 py-2 rounded-md text-sm font-medium">About</a>
+                    <a href="#experience" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Experience</a>
+                    <a href="#education" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Education</a>
+                    <a href="#skills" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Skills</a>
+                    <a href="#publications" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Publications</a>
+                    <a href="#contact" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Contact</a>
                 </nav>
-
                 <div class="hidden md:flex items-center space-x-4">
-                    <a href="mailto:email@example.com" class="text-gray-400 hover:text-[var(--accent-color)]">
-                        <i class="fas fa-envelope fa-lg"></i>
-                    </a>
-                    <a href="https://linkedin.com/in/username" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-[var(--accent-color)]">
-                        <i class="fab fa-linkedin fa-lg"></i>
-                    </a>
+                    <a id="header-email-link" href="mailto:hcgilbert22@gmail.com" class="text-[var(--text-secondary)] hover:text-[var(--accent-primary)]"><i class="fas fa-envelope fa-lg"></i></a>
+                    <a id="header-linkedin-link" href="https://www.linkedin.com/in/henry-gilbert-phd/" target="_blank" rel="noopener noreferrer" class="text-[var(--text-secondary)] hover:text-[var(--accent-primary)]"><i class="fab fa-linkedin fa-lg"></i></a>
                 </div>
-
                 <div class="md:hidden flex items-center">
-                    <button id="menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--accent-color)]" aria-expanded="false">
+                    <button id="menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent-primary)] hover:bg-[var(--card-bg)] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--accent-primary)]" aria-expanded="false">
                         <span class="sr-only">Open main menu</span>
-                        <svg id="menu-icon-open" class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-                        </svg>
-                        <svg id="menu-icon-close" class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+                        <svg id="menu-icon-open" class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+                        <svg id="menu-icon-close" class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                 </div>
             </div>
         </div>
-
-        <div id="mobile-menu" class="md:hidden hidden bg-gray-800/95">
+        <div id="mobile-menu" class="md:hidden hidden bg-[var(--main-bg)] border-t border-[var(--border-color)] shadow-lg">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#about" class="nav-link text-gray-300 hover:text-[var(--accent-color)] hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium">About</a>
-                <a href="#experience" class="nav-link text-gray-300 hover:text-[var(--accent-color)] hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium">Experience</a>
-                <a href="#education" class="nav-link text-gray-300 hover:text-[var(--accent-color)] hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium">Education</a>
-                <a href="#skills" class="nav-link text-gray-300 hover:text-[var(--accent-color)] hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium">Skills</a>
-                <a href="#publications" class="nav-link text-gray-300 hover:text-[var(--accent-color)] hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium">Publications</a>
-                <a href="#contact" class="nav-link text-gray-300 hover:text-[var(--accent-color)] hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium">Contact</a>
+                <a href="#about" class="nav-link hover:bg-[var(--card-bg)] block px-3 py-2 rounded-md text-base font-medium">About</a>
+                <a href="#experience" class="nav-link hover:bg-[var(--card-bg)] block px-3 py-2 rounded-md text-base font-medium">Experience</a>
+                <a href="#education" class="nav-link hover:bg-[var(--card-bg)] block px-3 py-2 rounded-md text-base font-medium">Education</a>
+                <a href="#skills" class="nav-link hover:bg-[var(--card-bg)] block px-3 py-2 rounded-md text-base font-medium">Skills</a>
+                <a href="#publications" class="nav-link hover:bg-[var(--card-bg)] block px-3 py-2 rounded-md text-base font-medium">Publications</a>
+                <a href="#contact" class="nav-link hover:bg-[var(--card-bg)] block px-3 py-2 rounded-md text-base font-medium">Contact</a>
             </div>
-            <div class="pt-4 pb-3 border-t border-gray-700">
-                <div class="flex items-center justify-center space-x-4 px-5">
-                     <a href="mailto:email@example.com" class="text-gray-400 hover:text-[var(--accent-color)]">
-                        <i class="fas fa-envelope fa-lg"></i> <span class="ml-2">email@example.com</span>
-                    </a>
-                </div>
-                <div class="flex items-center justify-center space-x-4 px-5 mt-3">
-                    <a href="https://linkedin.com/in/username" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-[var(--accent-color)]">
-                        <i class="fab fa-linkedin fa-lg"></i> <span class="ml-2">LinkedIn Profile</span>
-                    </a>
-                </div>
+            <div class="pt-4 pb-3 border-t border-[var(--border-color)]">
+                <div class="flex items-center justify-center space-x-4 px-5"><a id="mobile-email-link" href="mailto:hcgilbert22@gmail.com" class="text-[var(--text-secondary)] hover:text-[var(--accent-primary)]"><i class="fas fa-envelope fa-lg"></i> <span class="ml-2">hcgilbert22@gmail.com</span></a></div>
+                <div class="flex items-center justify-center space-x-4 px-5 mt-3"><a id="mobile-linkedin-link" href="https://www.linkedin.com/in/henry-gilbert-phd/" target="_blank" rel="noopener noreferrer" class="text-[var(--text-secondary)] hover:text-[var(--accent-primary)]"><i class="fab fa-linkedin fa-lg"></i> <span class="ml-2">LinkedIn Profile</span></a></div>
             </div>
         </div>
     </header>
 
-    <main class="pt-20"> <section id="hero" class="py-16 sm:py-20 lg:py-28 bg-gray-800 fade-in-section">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">
-                    <span class="block text-white">Henry Gilbert, PhD</span>
-                    <span class="block text-[var(--accent-color)] mt-2">Research and Engineering Leadership</span>
-                </h1>
-                <p class="mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-gray-300">
+    <main class="pt-16">
+        <section id="hero" class="relative py-24 sm:py-32 lg:py-40 overflow-hidden fade-in-up-section">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center hero-content-wrapper relative z-10">
+                <h1 id="hero-name" class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[var(--text-primary)]"></h1>
+                <h2 id="hero-title" class="text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight text-[var(--accent-primary)] mt-3"></h2>
+                <p class="mt-8 max-w-2xl mx-auto text-lg sm:text-xl text-[var(--text-secondary)]">
                     Driving innovation in AI/ML from cutting-edge research to large-scale production systems.
                 </p>
-                <div class="mt-10">
-                    <a href="#contact" class="inline-block bg-[var(--accent-color)] hover:bg-[var(--accent-color-darker)] text-white font-semibold py-3 px-8 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
-                        Get In Touch
-                    </a>
+                <div class="mt-12">
+                    <a id="hero-contact-link" href="#contact" class="inline-block bg-[var(--accent-primary)] hover:bg-[var(--accent-primary-darker)] text-white font-semibold py-3.5 px-10 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105">Get In Touch</a>
                 </div>
             </div>
         </section>
 
-        <section id="about" class="py-16 sm:py-20 lg:py-24 fade-in-section">
+        <section id="about" class="py-16 sm:py-20 lg:py-24 fade-in-up-section">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl sm:text-4xl section-heading">About Me</h2>
+                <h2 class="section-heading anime-section-title">About <span class="accent-text">Me</span></h2>
                 <div class="max-w-3xl mx-auto content-card">
-                    <p class="text-lg text-gray-300 leading-relaxed">
-                        Technical leader with significant experience in cutting-edge AI/ML research and large-scale production
-                        systems. Recent publications span Large Language Models, quantitative finance, and Bayesian statistical
-                        analysis. Adept at both hands-on principal-level individual contributions and cross-functional leadership on
-                        mission-critical initiatives. Proven record managing global teams, reducing operational costs, and delivering
-                        high-impact business results.
-                    </p>
+                    <p class="text-lg text-[var(--text-secondary)] leading-relaxed" id="summary-text"></p>
                 </div>
             </div>
         </section>
 
-        <section id="experience" class="py-16 sm:py-20 lg:py-24 fade-in-section">
+        <section id="experience" class="py-16 sm:py-20 lg:py-24 bg-section-card-bg fade-in-up-section">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl sm:text-4xl section-heading">Career Experience</h2>
-                <div class="timeline">
-                    </div>
+                <h2 class="section-heading anime-section-title">Career <span class="accent-text">Experience</span></h2>
+                <div class="timeline"></div>
             </div>
         </section>
 
-        <section id="education" class="py-16 sm:py-20 lg:py-24 bg-gray-800 fade-in-section">
+        <section id="education" class="py-16 sm:py-20 lg:py-24 fade-in-up-section">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl sm:text-4xl section-heading">Education</h2>
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    </div>
+                <h2 class="section-heading anime-section-title"><span class="accent-text">Education</span></h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
             </div>
         </section>
 
-        <section id="skills" class="py-16 sm:py-20 lg:py-24 fade-in-section">
+        <section id="skills" class="py-16 sm:py-20 lg:py-24 bg-section-card-bg fade-in-up-section">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl sm:text-4xl section-heading">Core Competencies</h2>
+                <h2 class="section-heading anime-section-title">Core <span class="accent-text">Competencies</span></h2>
                 <div class="max-w-2xl mx-auto p-4 sm:p-6 lg:p-8 content-card">
                     <canvas id="skillsChart"></canvas>
                 </div>
             </div>
         </section>
 
-        <section id="publications" class="py-16 sm:py-20 lg:py-24 bg-gray-800 fade-in-section">
+        <section id="publications" class="py-16 sm:py-20 lg:py-24 fade-in-up-section">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl sm:text-4xl section-heading">Publications</h2>
-                <div class="space-y-8">
-                    </div>
+                <h2 class="section-heading anime-section-title"><span class="accent-text">Publications</span></h2>
+                <div class="space-y-8"></div>
             </div>
         </section>
 
-        <section id="contact" class="py-16 sm:py-20 lg:py-24 fade-in-section">
+        <section id="contact" class="py-16 sm:py-20 lg:py-24 bg-section-card-bg fade-in-up-section">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h2 class="text-3xl sm:text-4xl section-heading">Get In Touch</h2>
-                <p class="text-lg text-gray-300 mb-8 max-w-xl mx-auto">
+                <h2 class="section-heading anime-section-title">Get In <span class="accent-text">Touch</span></h2>
+                <p class="text-lg text-[var(--text-secondary)] mb-10 max-w-xl mx-auto">
                     I'm always open to discussing new projects, creative ideas, or opportunities to be part of something impactful.
                 </p>
                 <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
-                    <a href="mailto:email@example.com" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-[var(--accent-color)] hover:bg-[var(--accent-color-darker)] transition duration-300 w-full sm:w-auto">
-                        <i class="fas fa-envelope mr-2"></i> Email Me
-                    </a>
-                    <a href="https://linkedin.com/in/username" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center px-6 py-3 border border-[var(--border-color)] text-base font-medium rounded-lg text-[var(--accent-color)] hover:bg-gray-700 transition duration-300 w-full sm:w-auto">
-                        <i class="fab fa-linkedin mr-2"></i> LinkedIn Profile
-                    </a>
+                    <a id="contact-email-button" href="mailto:hcgilbert22@gmail.com" class="inline-flex items-center justify-center px-8 py-3.5 border border-transparent text-base font-semibold rounded-lg text-white bg-[var(--accent-primary)] hover:bg-[var(--accent-primary-darker)] transition-all duration-300 w-full sm:w-auto shadow-md hover:shadow-lg"><i class="fas fa-envelope mr-2.5"></i> Email Me</a>
+                    <a id="contact-linkedin-button" href="https://www.linkedin.com/in/henry-gilbert-phd/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center px-8 py-3.5 border border-[var(--accent-primary)] text-base font-semibold rounded-lg text-[var(--accent-primary)] hover:bg-[var(--accent-primary)] hover:text-white transition-all duration-300 w-full sm:w-auto shadow-md hover:shadow-lg"><i class="fab fa-linkedin mr-2.5"></i> LinkedIn Profile</a>
                 </div>
             </div>
         </section>
     </main>
 
-    <footer class="bg-gray-900 border-t border-[var(--border-color)]">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-gray-400">
+    <footer class="bg-[var(--main-bg)] border-t border-[var(--border-color)]">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-10 text-center text-[var(--text-secondary)]">
             <p>&copy; <span id="currentYear"></span> Henry Gilbert, PhD. All rights reserved.</p>
-            <p class="text-sm mt-1">Designed with <i class="fas fa-heart text-red-500"></i> and Tailwind CSS.</p>
+            <p class="text-sm mt-2">Built with <i class="fas fa-code text-[var(--accent-primary)]"></i> and <i class="fas fa-heart text-red-500"></i>, powered by Tailwind CSS & Anime.js.</p>
         </div>
     </footer>
 
     <script>
-        // --- Resume Data ---
-        const resumeData = {
+        const GEMINI_API_KEY = "AIzaSyAvENmoMApAQD_GziHtIvN5Y_p8tZyi0B0"; // Your API Key
+        const GEMINI_MODEL_NAME = "gemini-1.5-flash-latest"; // Using the specified model
+
+        // --- Resume Data (Updated Contact Info) ---
+        const resumeData = { 
             name: "Henry Gilbert, PhD",
             title: "Research and Engineering Leadership",
-            contact: {
-                email: "email@example.com",
-                linkedin: "https://linkedin.com/in/username", // Placeholder
-                location: "Nashville, TN"
+            contact: { 
+                email: "hcgilbert22@gmail.com", 
+                linkedin: "https://www.linkedin.com/in/henry-gilbert-phd/", 
+                location: "Nashville, TN" 
             },
             summary: "Technical leader with significant experience in cutting-edge AI/ML research and large-scale production systems. Recent publications span Large Language Models, quantitative finance, and Bayesian statistical analysis. Adept at both hands-on principal-level individual contributions and cross-functional leadership on mission-critical initiatives. Proven record managing global teams, reducing operational costs, and delivering high-impact business results.",
             experience: [
-                {
-                    title: "Head of AI & Data Infrastructure",
-                    company: "Arta Finance",
-                    dates: "Aug 2024 - Present",
-                    details: [
-                        "Global Engineering Leadership: Oversaw teams in San Francisco, Singapore, and remote locations. Reduced operational costs of trading systems by 85% within the first quarter.",
-                        "State-of-the-Art LLM Financial Advisor: Led development of an agentic LLM-based wealth management platform, including a novel voice-to-voice interaction engine. Achieved industry-leading conversational latency and scaled to 5K concurrent conversations and billions of tokens processed.",
-                        "Data Vendor Migration & Expansion: Spearheaded vendor migration for core data services, implementing real-time safeguards and regression checks that cut on-call hours by 60%."
-                    ]
-                },
-                {
-                    title: "AI Research and Engineering Lead",
-                    company: "Arta Finance",
-                    dates: "Jan 2024 - Aug 2024",
-                    details: [
-                        "Staff-Level Team Management: Oversaw a cross-functional team of 6 staff engineers focusing on production research and trading.",
-                        "Large-Scale Trading Systems: Led maintenance, expansion, and feature rollouts of AI R&D and trading systems powering billions in annual trading volume.",
-                        "Culture & Growth: Mentored engineers on technical excellence and project management. Achieved the firm's top development throughput with minimal downtime for high-value processes."
-                    ]
-                },
-                {
-                    title: "Staff Research Engineer (L6)",
-                    company: "Arta Finance",
-                    dates: "June 2022 - Jan 2024",
-                    subtitle: "Lead AI R&D systems for Research and real-time trading",
-                    details: [
-                        "Foundational AI Infrastructure: Fourth AI hire, responsible for the design, development, and maintenance of large-scale AI pipelines (10,000+ distributed models across 10,000 machines).",
-                        "Dynamic High-Throughput Streaming: Built real-time pipelines for intra-day order generation, risk checks, and account-level optimizations.",
-                        "LLM Inference at Scale: Processed 40K+ financial reports across 20 systematically maintained LLMs requiring 10TB VRAM.",
-                        "Technical Leadership: Drove both AI research for allocation generation and a unified e2e production system for live trading and historical backtesting."
-                    ]
-                },
-                {
-                    title: "Founder / CTO",
-                    company: "Athena AIC",
-                    dates: "Jan 2022 - Present",
-                    subtitle: "Founded AI consulting firm to solve hard problems (as a side project)",
-                    details: [
-                        "Bootstrapped Growth: Within 2 years, grew to a team of 8 with 6 engineers and $4M ARR.",
-                        "Differentiated Value: Implemented novel SOTA AI solutions from ideation to production execution. Solutions have resulted in proprietary IP and patents for multiple clients with one client securing a $10M series A round. Projects have ranged from LLM-powered tax analysis and optimizations via graph construction to interpretable relationship extraction across 10ks of financial documents for hedge fund management.",
-                        "Engineering Leadership: Worked with multiple clients to supplement existing engineering leadership, provide AI strategy and implementation guidelines."
-                    ]
-                },
-                {
-                    title: "Head of Machine Learning",
-                    company: "Copia Wealth Studios",
-                    dates: "Jan 2021 - June 2022",
-                    subtitle: "Lead AI R&D systems for Research and real-time trading",
-                    details: [
-                        "Founding AI Lead: Built and led an 8-member AI team. Drove a 20% increase in company profit via automated document ingestion and reduced cloud compute costs by 70% through model optimizations.",
-                        "Production AI Infrastructure: Designed and deployed scalable AI systems using AWS (SageMaker, Lambda, S3, Queues, ElastiCache).",
-                        "Cutting-Edge Document Ingestion: Created a proprietary engine outperforming market and academic benchmarks by 10% using cascading ensemble models for semantic parsing."
-                    ]
-                },
-                {
-                    title: "Lead Data Analyst",
-                    company: "Enovational",
-                    dates: "July 2020 - Jan 2021",
-                    subtitle: "Led Optimization of Government mission-critical database migrations",
-                    details: [
-                        "Novel Optimization: Led development of autonomous solver for nonlinear, partially intractable relationship using distributed computing.",
-                        "Cost Reduction: Introduced automated tooling, which decreased migration process time by 95% and increased project profitability by 45%."
-                    ]
-                },
-                {
-                    title: "Data Scientist",
-                    company: "Chick-Fil-A Regional",
-                    dates: "Jan 2019 - July 2020",
-                    subtitle: "Built distributed ingestion for real-time processing and forecasting",
-                    details: [
-                        "Productivity: Analyzed automated bottlenecks and increased process efficiency by 30% by predictively identifying the next manufacturing bottleneck.",
-                        "Dynamic Forecasting: Optimized demand forecasting by leveraging DL to engineer an automated data analytics tool and increased store profit by 15%."
-                    ]
-                }
+                { title: "Head of AI & Data Infrastructure", company: "Arta Finance", dates: "Aug 2024 - Present", details: ["Global Engineering Leadership: Oversaw teams in San Francisco, Singapore, and remote locations. Reduced operational costs of trading systems by 85% within the first quarter.","State-of-the-Art LLM Financial Advisor: Led development of an agentic LLM-based wealth management platform, including a novel voice-to-voice interaction engine. Achieved industry-leading conversational latency and scaled to 5K concurrent conversations and billions of tokens processed.","Data Vendor Migration & Expansion: Spearheaded vendor migration for core data services, implementing real-time safeguards and regression checks that cut on-call hours by 60%."]},
+                { title: "AI Research and Engineering Lead", company: "Arta Finance", dates: "Jan 2024 - Aug 2024", details: ["Staff-Level Team Management: Oversaw a cross-functional team of 6 staff engineers focusing on production research and trading.","Large-Scale Trading Systems: Led maintenance, expansion, and feature rollouts of AI R&D and trading systems powering billions in annual trading volume.","Culture & Growth: Mentored engineers on technical excellence and project management. Achieved the firm's top development throughput with minimal downtime for high-value processes."]},
+                { title: "Staff Research Engineer (L6)", company: "Arta Finance", dates: "June 2022 - Jan 2024", subtitle: "Lead AI R&D systems for Research and real-time trading", details: ["Foundational AI Infrastructure: Fourth AI hire, responsible for the design, development, and maintenance of large-scale AI pipelines (10,000+ distributed models across 10,000 machines).","Dynamic High-Throughput Streaming: Built real-time pipelines for intra-day order generation, risk checks, and account-level optimizations.","LLM Inference at Scale: Processed 40K+ financial reports across 20 systematically maintained LLMs requiring 10TB VRAM.","Technical Leadership: Drove both AI research for allocation generation and a unified e2e production system for live trading and historical backtesting."]},
+                { title: "Founder / CTO", company: "Athena AIC", dates: "Jan 2022 - Present", subtitle: "Founded AI consulting firm to solve hard problems (as a side project)", details: ["Bootstrapped Growth: Within 2 years, grew to a team of 8 with 6 engineers and $4M ARR.","Differentiated Value: Implemented novel SOTA AI solutions from ideation to production execution. Solutions have resulted in proprietary IP and patents for multiple clients with one client securing a $10M series A round. Projects have ranged from LLM-powered tax analysis and optimizations via graph construction to interpretable relationship extraction across 10ks of financial documents for hedge fund management.","Engineering Leadership: Worked with multiple clients to supplement existing engineering leadership, provide AI strategy and implementation guidelines."]},
+                { title: "Head of Machine Learning", company: "Copia Wealth Studios", dates: "Jan 2021 - June 2022", subtitle: "Lead AI R&D systems for Research and real-time trading", details: ["Founding AI Lead: Built and led an 8-member AI team. Drove a 20% increase in company profit via automated document ingestion and reduced cloud compute costs by 70% through model optimizations.","Production AI Infrastructure: Designed and deployed scalable AI systems using AWS (SageMaker, Lambda, S3, Queues, ElastiCache).","Cutting-Edge Document Ingestion: Created a proprietary engine outperforming market and academic benchmarks by 10% using cascading ensemble models for semantic parsing."]},
+                { title: "Lead Data Analyst", company: "Enovational", dates: "July 2020 - Jan 2021", subtitle: "Led Optimization of Government mission-critical database migrations", details: ["Novel Optimization: Led development of autonomous solver for nonlinear, partially intractable relationship using distributed computing.","Cost Reduction: Introduced automated tooling, which decreased migration process time by 95% and increased project profitability by 45%."]},
+                { title: "Data Scientist", company: "Chick-Fil-A Regional", dates: "Jan 2019 - July 2020", subtitle: "Built distributed ingestion for real-time processing and forecasting", details: ["Productivity: Analyzed automated bottlenecks and increased process efficiency by 30% by predictively identifying the next manufacturing bottleneck.","Dynamic Forecasting: Optimized demand forecasting by leveraging DL to engineer an automated data analytics tool and increased store profit by 15%."]}
             ],
             education: [
-                {
-                    degree: "Doctor of Philosophy, Computer Science & Artificial Intelligence",
-                    institution: "Vanderbilt University, Nashville, TN",
-                    details: "GPA: 4.0/4.0. Completed in 2 years."
-                },
-                {
-                    degree: "Masters of Science, Computer Science",
-                    institution: "Vanderbilt University, Nashville, TN",
-                    details: "GPA: 3.95/4.0. Completed in 1 year."
-                },
-                {
-                    degree: "Bachelor of Science, Computer Science",
-                    institution: "Florida State University, Tallahassee, FL",
-                    details: "GPA: 3.9/4.0. Completed in 2 years."
-                }
+                { degree: "Doctor of Philosophy, Computer Science & Artificial Intelligence", institution: "Vanderbilt University, Nashville, TN", details: "GPA: 4.0/4.0. Completed in 2 years."},
+                { degree: "Masters of Science, Computer Science", institution: "Vanderbilt University, Nashville, TN", details: "GPA: 3.95/4.0. Completed in 1 year."},
+                { degree: "Bachelor of Science, Computer Science", institution: "Florida State University, Tallahassee, FL", details: "GPA: 3.9/4.0. Completed in 2 years."}
             ],
             publications: [
-                { title: "Generating Synthetic Returns Conditioned Off Macro Economic Features with Variational Autoencoders", venue: "ICISNA, 2023" },
-                { title: "Semantic Compression with Large Language Models", venue: "arXiv.org, 2023" },
-                { title: "Cyber-Physical Component Verification with Global Collision Estimation through Markok Integration", venue: "ICISNA, 2022" },
-                { title: "A Prompt Pattern Catalog to Enhance Prompt Engineering", venue: "arXiv.org, 2022" },
-                { title: "Using LSTM Networks and Future Gradient Values to Forecast Heart Rate in Biking", venue: "IcSPORTS, 2021" }
+                { title: "Generating Synthetic Returns Conditioned Off Macro Economic Features with Variational Autoencoders", venue: "ICISNA, 2023", url: "#" },
+                { title: "Semantic Compression with Large Language Models", venue: "arXiv.org, 2023", url: "https://arxiv.org/abs/your-paper-id-1" }, // Replace with actual ID
+                { title: "Cyber-Physical Component Verification with Global Collision Estimation through Markok Integration", venue: "ICISNA, 2022", url: "#" },
+                { title: "A Prompt Pattern Catalog to Enhance Prompt Engineering", venue: "arXiv.org, 2022", url: "https://arxiv.org/abs/your-paper-id-2" }, // Replace with actual ID
+                { title: "Using LSTM Networks and Future Gradient Values to Forecast Heart Rate in Biking", venue: "IcSPORTS, 2021", url: "#" }
             ],
-            skills: [
-                { name: "PhD-Level Statistical Analysis", level: 5 },
-                { name: "Artificial Intelligence R&D", level: 5 },
-                { name: "Large Language Models", level: 5 },
-                { name: "Large-Scale Data Systems", level: 5 },
-                { name: "Large-Scale AI Research", level: 5 },
-                { name: "Scalable Production AI", level: 5 },
-                { name: "IC Technical Leadership", level: 4 },
-                { name: "Engineering Management", level: 4 },
-                { name: "Project/Product Management", level: 4 }
+            skills: [ 
+                { name: "Statistical Analysis", level: 5 }, { name: "AI R&D", level: 5 }, { name: "LLMs", level: 5 },
+                { name: "Large Data Systems", level: 5 }, { name: "Large AI Research", level: 5 }, { name: "Scalable AI Prod.", level: 5 },
+                { name: "Tech Leadership", level: 4 }, { name: "Eng. Management", level: 4 }, { name: "Product Management", level: 4 }
             ]
         };
 
+        let chatHistory = []; // To store conversation history for the chatbot
+
         // --- DOMContentLoaded Event Listener ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Remove preloader once content is loaded
             const preloader = document.getElementById('preloader');
             if (preloader) {
-                setTimeout(() => { // Ensure a minimum display time for preloader
-                    preloader.style.opacity = '0';
-                    setTimeout(() => preloader.style.display = 'none', 500);
-                }, 500);
+                setTimeout(() => {
+                    anime({ targets: preloader, opacity: 0, duration: 500, easing: 'easeInOutQuad', complete: () => preloader.style.display = 'none' });
+                }, 300);
             }
 
-            // Populate dynamic content
+            // Populate dynamic content (including updated contact info)
+            populateHeroText();
+            document.getElementById('summary-text').textContent = resumeData.summary;
             populateExperience();
             populateEducation();
             populatePublications();
+            updateContactLinks(); // Ensure all contact links are set from resumeData
             
-            // Initialize interactive elements
             initMobileMenu();
             initSkillsChart();
-            initScrollAnimations();
-            updateActiveNavLinkOnScroll(); // Call this to set initial active link and on scroll
+            initScrollAnimations(); 
+            initAnimeJsTextAnimations();
+            initChatbot(); // Initialize the chatbot
+            updateActiveNavLinkOnScroll();
 
-            // Set current year in footer
             document.getElementById('currentYear').textContent = new Date().getFullYear();
         });
+        
+        function updateContactLinks() {
+            // Header links
+            const headerEmailLink = document.getElementById('header-email-link');
+            if (headerEmailLink) headerEmailLink.href = `mailto:${resumeData.contact.email}`;
+            const headerLinkedinLink = document.getElementById('header-linkedin-link');
+            if (headerLinkedinLink) headerLinkedinLink.href = resumeData.contact.linkedin;
 
-        // --- Mobile Menu Functionality ---
-        function initMobileMenu() {
+            // Mobile menu links
+            const mobileEmailLink = document.getElementById('mobile-email-link');
+            if (mobileEmailLink) {
+                mobileEmailLink.href = `mailto:${resumeData.contact.email}`;
+                mobileEmailLink.querySelector('span').textContent = resumeData.contact.email;
+            }
+            const mobileLinkedinLink = document.getElementById('mobile-linkedin-link');
+            if (mobileLinkedinLink) mobileLinkedinLink.href = resumeData.contact.linkedin;
+            
+            // Contact section buttons
+            const contactEmailButton = document.getElementById('contact-email-button');
+            if (contactEmailButton) contactEmailButton.href = `mailto:${resumeData.contact.email}`;
+            const contactLinkedinButton = document.getElementById('contact-linkedin-button');
+            if (contactLinkedinButton) contactLinkedinButton.href = resumeData.contact.linkedin;
+        }
+
+
+        function populateHeroText() { 
+            const nameEl = document.getElementById('hero-name');
+            const titleEl = document.getElementById('hero-title');
+            if (nameEl) nameEl.innerHTML = resumeData.name.split('').map(letter => `<span class="anime-letter">${letter === ' ' ? '&nbsp;' : letter}</span>`).join('');
+            if (titleEl) titleEl.innerHTML = resumeData.title.split('').map(letter => `<span class="anime-letter">${letter === ' ' ? '&nbsp;' : letter}</span>`).join('');
+        }
+        function initMobileMenu() { 
             const menuButton = document.getElementById('menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
             const menuIconOpen = document.getElementById('menu-icon-open');
             const menuIconClose = document.getElementById('menu-icon-close');
             const navLinks = mobileMenu.querySelectorAll('a');
-
             if (menuButton && mobileMenu && menuIconOpen && menuIconClose) {
                 menuButton.addEventListener('click', () => {
                     const isExpanded = menuButton.getAttribute('aria-expanded') === 'true' || false;
@@ -525,8 +556,6 @@
                     menuIconOpen.classList.toggle('hidden');
                     menuIconClose.classList.toggle('hidden');
                 });
-
-                // Close mobile menu when a link is clicked
                 navLinks.forEach(link => {
                     link.addEventListener('click', () => {
                         menuButton.setAttribute('aria-expanded', 'false');
@@ -537,165 +566,232 @@
                 });
             }
         }
-
-        // --- Populate Experience Timeline ---
         function populateExperience() {
             const timelineContainer = document.querySelector('#experience .timeline');
             if (!timelineContainer) return;
-
+            timelineContainer.innerHTML = ''; 
             resumeData.experience.forEach((job, index) => {
                 const directionClass = index % 2 === 0 ? 'timeline-left' : 'timeline-right';
-                const itemHTML = `
-                    <div class="timeline-container ${directionClass}">
-                        <div class="timeline-content">
-                            <h3 class="text-xl font-semibold mb-1">${job.title}</h3>
-                            <p class="text-md font-medium text-gray-400">${job.company}</p>
-                            <p class="date">${job.dates}</p>
-                            ${job.subtitle ? `<p class="italic text-gray-400 mb-2">${job.subtitle}</p>` : ''}
-                            <ul class="list-disc list-inside text-gray-300 space-y-1 text-sm">
-                                ${job.details.map(detail => `<li>${detail}</li>`).join('')}
-                            </ul>
-                        </div>
-                    </div>
-                `;
+                const itemHTML = `<div class="timeline-container ${directionClass} fade-in-up-section"><div class="timeline-content"><h3 class="text-xl font-semibold mb-1">${job.title}</h3><p class="company text-md font-medium text-[var(--text-primary)]">${job.company}</p><p class="date">${job.dates}</p>${job.subtitle ? `<p class="italic text-[var(--text-secondary)] mb-2 text-sm">${job.subtitle}</p>` : ''}<ul class="list-disc list-inside text-[var(--text-secondary)] space-y-1.5 text-sm leading-relaxed">${job.details.map(detail => `<li>${detail}</li>`).join('')}</ul></div></div>`;
                 timelineContainer.innerHTML += itemHTML;
             });
         }
-
-        // --- Populate Education Section ---
-        function populateEducation() {
+        function populateEducation() { 
             const educationContainer = document.querySelector('#education .grid');
             if (!educationContainer) return;
-
+            educationContainer.innerHTML = '';
             resumeData.education.forEach(edu => {
-                const itemHTML = `
-                    <div class="content-card">
-                        <h3 class="text-xl font-semibold text-[var(--accent-color)] mb-1">${edu.degree}</h3>
-                        <p class="text-md font-medium text-gray-300">${edu.institution}</p>
-                        <p class="text-sm text-gray-400 mt-1">${edu.details}</p>
-                    </div>
-                `;
+                const itemHTML = `<div class="content-card fade-in-up-section h-full"><h3 class="text-xl font-semibold text-[var(--accent-primary)] mb-1.5">${edu.degree}</h3><p class="text-md font-medium text-[var(--text-primary)]">${edu.institution}</p><p class="text-sm text-[var(--text-secondary)] mt-1.5">${edu.details}</p></div>`;
                 educationContainer.innerHTML += itemHTML;
             });
         }
-        
-        // --- Populate Publications Section ---
-        function populatePublications() {
+        function populatePublications() { 
             const publicationsContainer = document.querySelector('#publications .space-y-8');
             if (!publicationsContainer) return;
-
+            publicationsContainer.innerHTML = '';
             resumeData.publications.forEach(pub => {
-                const itemHTML = `
-                    <div class="content-card">
-                        <h3 class="text-lg font-semibold text-gray-100">${pub.title}</h3>
-                        <p class="text-sm text-[var(--accent-color)] mt-1">${pub.venue}</p>
-                    </div>
-                `;
+                const link = pub.url && pub.url !== "#" ? `<a href="${pub.url}" target="_blank" rel="noopener noreferrer">Read More <i class="fas fa-external-link-alt fa-xs ml-1"></i></a>` : '';
+                const itemHTML = `<div class="content-card fade-in-up-section"><h3 class="text-lg font-semibold text-[var(--text-primary)]">${pub.title}</h3><p class="text-sm text-[var(--accent-primary)] mt-1.5 font-medium">${pub.venue} ${link ? `&bull; ${link}` : ''}</p></div>`;
                 publicationsContainer.innerHTML += itemHTML;
             });
         }
-
-        // --- Initialize Skills Chart (Chart.js Radar Chart) ---
-        function initSkillsChart() {
+        function initSkillsChart() { 
             const ctx = document.getElementById('skillsChart');
             if (!ctx) return;
-
             const skillLabels = resumeData.skills.map(skill => skill.name);
             const skillData = resumeData.skills.map(skill => skill.level);
-
-            new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: skillLabels,
-                    datasets: [{
-                        label: 'Proficiency (Illustrative)',
-                        data: skillData,
-                        backgroundColor: 'rgba(56, 189, 248, 0.2)', // Sky Blue with transparency
-                        borderColor: 'rgb(56, 189, 248)', // Sky Blue
-                        pointBackgroundColor: 'rgb(56, 189, 248)',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgb(56, 189, 248)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    scales: {
-                        r: {
-                            angleLines: { color: 'rgba(226, 232, 240, 0.3)' }, // Light gray grid lines
-                            grid: { color: 'rgba(226, 232, 240, 0.3)' },
-                            pointLabels: { 
-                                font: { size: 12, family: 'Inter' },
-                                color: '#e2e8f0' // Light gray text for labels
-                            },
-                            ticks: {
-                                backdropColor: 'transparent', // Make ticks background transparent
-                                color: '#e2e8f0', // Light gray tick text
-                                stepSize: 1,
-                                font: { family: 'Inter' }
-                            },
-                            min: 0,
-                            max: 5 
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: '#e2e8f0', // Light gray legend text
-                                font: { family: 'Inter' }
-                            }
-                        }
-                    }
-                }
-            });
+            Chart.defaults.font.family = 'Inter';
+            Chart.defaults.color = 'var(--text-secondary)';
+            new Chart(ctx, { type: 'radar', data: { labels: skillLabels, datasets: [{ label: 'Proficiency', data: skillData, backgroundColor: 'rgba(99, 179, 237, 0.2)', borderColor: 'var(--accent-primary)', pointBackgroundColor: 'var(--accent-primary)', pointBorderColor: 'var(--main-bg)', pointHoverBackgroundColor: 'var(--main-bg)', pointHoverBorderColor: 'var(--accent-primary)', borderWidth: 2, pointRadius: 4, pointHoverRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: true, scales: { r: { angleLines: { color: 'var(--border-color)' }, grid: { color: 'var(--border-color)' }, pointLabels: { font: { size: 12, weight: '500' }, color: 'var(--text-primary)'}, ticks: { backdropColor: 'transparent', color: 'var(--text-secondary)', stepSize: 1, font: { size: 10 }}, min: 0, max: 5 }}, plugins: { legend: { display: false }}}});
         }
-
-        // --- Scroll-triggered Animations ---
-        function initScrollAnimations() {
-            const sections = document.querySelectorAll('.fade-in-section');
-            const observerOptions = {
-                root: null, // relative to document viewport
-                rootMargin: '0px',
-                threshold: 0.1 // 10% of item is visible
-            };
-
-            const observer = new IntersectionObserver((entries, observer) => {
+        function initScrollAnimations() { 
+            const sections = document.querySelectorAll('.fade-in-up-section');
+            const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
+            const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('is-visible');
-                        // Optional: unobserve after animation to save resources
-                        // observer.unobserve(entry.target); 
+                        if (entry.target.classList.contains('anime-section-title')) {
+                            anime({ targets: entry.target, opacity: [0, 1], translateY: [20, 0], duration: 800, delay: anime.stagger(100, {start: 200}), easing: 'easeOutExpo'});
+                        }
                     }
                 });
             }, observerOptions);
-
-            sections.forEach(section => {
-                observer.observe(section);
-            });
+            sections.forEach(section => observer.observe(section));
         }
-
-        // --- Update Active Navigation Link on Scroll ---
-        function updateActiveNavLinkOnScroll() {
-            const sections = document.querySelectorAll('section[id]');
+        function initAnimeJsTextAnimations() { 
+            anime.timeline({loop: false})
+                .add({ targets: '#hero-name .anime-letter', opacity: [0,1], translateY: [25,0], rotateZ: [5,0], delay: anime.stagger(35, {start: 700}), easing: 'easeOutExpo'})
+                .add({ targets: '#hero-title .anime-letter', opacity: [0,1], translateY: [20,0], delay: anime.stagger(30, {start: 200}), easing: 'easeOutExpo'}, '-=600');
+        }
+        function updateActiveNavLinkOnScroll() { 
+            const sections = document.querySelectorAll('main > section[id]');
             const navLinks = document.querySelectorAll('.nav-link');
-            
             function changeActiveLink() {
                 let index = sections.length;
-
-                while(--index && window.scrollY + 100 < sections[index].offsetTop) {} // 100 is an offset
-                
+                const offset = window.innerHeight * 0.4;
+                while(--index >= 0 && window.scrollY + offset < sections[index].offsetTop) {}
                 navLinks.forEach((link) => link.classList.remove('active'));
-                // Check if the corresponding navLink exists before adding class
-                if (navLinks[index]) {
-                     // Check both desktop and mobile nav links
-                    document.querySelectorAll(`.nav-link[href="#${sections[index].id}"]`).forEach(activeLink => {
-                        activeLink.classList.add('active');
+                if (index >=0 && sections[index]) { 
+                    document.querySelectorAll(`.nav-link[href="#${sections[index].id}"]`).forEach(activeLink => { activeLink.classList.add('active'); });
+                } else if (sections.length > 0 && window.scrollY < sections[0].offsetTop - offset) { /* No link active */ }
+            }
+            if (sections.length > 0) { changeActiveLink(); window.addEventListener('scroll', changeActiveLink); }
+        }
+
+        // --- Chatbot Functionality ---
+        function initChatbot() {
+            const fab = document.getElementById('chatbot-fab');
+            const windowEl = document.getElementById('chatbot-window');
+            const closeButton = document.getElementById('chatbot-close');
+            const messagesContainer = document.getElementById('chatbot-messages');
+            const inputEl = document.getElementById('chatbot-input');
+            const sendButton = document.getElementById('chatbot-send');
+
+            // Add initial bot message to history and display
+            const initialBotMessage = "Hello! How can I help you with Henry's resume today?";
+            appendMessage(initialBotMessage, 'bot');
+            chatHistory.push({ role: 'model', parts: [{ text: initialBotMessage }] });
+
+
+            fab.addEventListener('click', () => windowEl.classList.toggle('active'));
+            closeButton.addEventListener('click', () => windowEl.classList.remove('active'));
+            sendButton.addEventListener('click', sendMessage);
+            inputEl.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage();
+            });
+
+            function sendMessage() {
+                const messageText = inputEl.value.trim();
+                if (!messageText) return;
+
+                appendMessage(messageText, 'user');
+                chatHistory.push({ role: 'user', parts: [{ text: messageText }] });
+                inputEl.value = '';
+                getBotResponse(messageText);
+            }
+
+            function appendMessage(text, type, isThinking = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('chat-message', type);
+                if (isThinking) messageDiv.classList.add('thinking'); // Special class for "Thinking..."
+                
+                let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); 
+                formattedText = formattedText.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-[var(--accent-primary)] hover:underline">$1</a>');
+                const urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+                formattedText = formattedText.replace(urlRegex, (url) => `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-[var(--accent-primary)] hover:underline">${url}</a>`);
+
+                messageDiv.innerHTML = formattedText; 
+                messagesContainer.appendChild(messageDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            async function getBotResponse(userMessage) {
+                // Display "Thinking..." message and add to history for temporary display
+                appendMessage("Thinking...", "bot", true); 
+                const thinkingMessageEl = messagesContainer.lastChild;
+
+                let resumeContextString = "This is the resume of Henry Gilbert, PhD:\n\n";
+                resumeContextString += `Name: ${resumeData.name}\nTitle: ${resumeData.title}\nContact: Email - ${resumeData.contact.email}, LinkedIn - ${resumeData.contact.linkedin}\nLocation: ${resumeData.contact.location}\n\nSummary: ${resumeData.summary}\n\n`;
+                resumeContextString += "Experience:\n";
+                resumeData.experience.forEach(exp => {
+                    resumeContextString += `- ${exp.title} at ${exp.company} (${exp.dates})\n`;
+                    if (exp.subtitle) resumeContextString += `  ${exp.subtitle}\n`;
+                    exp.details.forEach(detail => resumeContextString += `    - ${detail}\n`);
+                });
+                resumeContextString += "\nEducation:\n";
+                resumeData.education.forEach(edu => {
+                    resumeContextString += `- ${edu.degree}, ${edu.institution}\n  ${edu.details}\n`;
+                });
+                resumeContextString += "\nPublications:\n";
+                resumeData.publications.forEach(pub => {
+                    resumeContextString += `- "${pub.title}" (${pub.venue}) ${pub.url && pub.url !== '#' ? `Link: ${pub.url}` : ''}\n`;
+                });
+                resumeContextString += "\nCore Competencies:\n";
+                resumeData.skills.forEach(skill => { resumeContextString += `- ${skill.name}\n`; });
+
+                // Construct the full conversation history for the API
+                const contentsForApi = [
+                    // System/Context instruction part
+                    {
+                        role: "user", // Gemini API expects alternating user/model roles. Start with user for system prompt.
+                        parts: [{
+                            text: `You’re Henry Gilbert’s feisty digital twin—sharp, unapologetic, and allergic to fluff. 
+                            Answer questions with confident swagger and a dash of playful disdain. 
+                            If the asker clearly missed what’s on the résumé, call it out (“reading is hard, huh?”) before giving the answer. 
+                            If the info isn’t in the résumé, just say so—no guessing or padding.
+
+                            Keep replies concise, direct, and brimming with big-balls energy.
+
+                            When citing publications with URLs, format them as [Title](URL). 
+                            Use **bold** Markdown for standout roles, skills, or achievements.
+
+                            Resume Intel:
+                            ${resumeContextString}`
+                        }]
+                    },
+                    { // A model part to acknowledge system prompt (helps guide the model)
+                        role: "model",
+                        parts: [{ text: "Okay, I understand. I will answer questions based on Henry Gilbert's resume information provided." }]
+                    },
+                    // Actual chat history
+                    ...chatHistory.slice(0, -1), // Add all history except the last user message (which is the current one)
+                    // Current user question
+                    { role: "user", parts: [{ text: userMessage }] }
+                ];
+
+
+                try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL_NAME}:generateContent?key=${GEMINI_API_KEY}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: contentsForApi, // Send the constructed history + new question
+                            generationConfig: {
+                                temperature: 0.5, // Slightly lower for more factual responses
+                                topK: 40,
+                                topP: 0.95,
+                                maxOutputTokens: 512,
+                            }
+                        })
                     });
+                    
+                    if (thinkingMessageEl && thinkingMessageEl.parentNode === messagesContainer) {
+                        messagesContainer.removeChild(thinkingMessageEl); // Remove "Thinking..."
+                    }
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.error("Gemini API Error:", errorData);
+                        const errorMessage = `Sorry, I encountered an error: ${errorData.error?.message || response.statusText}. Please check the console.`;
+                        appendMessage(errorMessage, "bot", true);
+                        chatHistory.push({ role: 'model', parts: [{ text: errorMessage }] }); // Add error to history
+                        return;
+                    }
+
+                    const data = await response.json();
+                    
+                    if (data.candidates && data.candidates.length > 0 && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts.length > 0) {
+                        const botText = data.candidates[0].content.parts[0].text;
+                        appendMessage(botText, 'bot');
+                        chatHistory.push({ role: 'model', parts: [{ text: botText }] }); // Add bot response to history
+                    } else {
+                        const noResponseMessage = "Sorry, I couldn't get a response. The response format was unexpected.";
+                        appendMessage(noResponseMessage, 'bot', true);
+                        chatHistory.push({ role: 'model', parts: [{ text: noResponseMessage }] }); // Add error to history
+                        console.error("Unexpected API response format:", data);
+                    }
+
+                } catch (error) {
+                     if (thinkingMessageEl && thinkingMessageEl.parentNode === messagesContainer) {
+                        messagesContainer.removeChild(thinkingMessageEl); // Remove "Thinking..."
+                    }
+                    console.error("Error calling Gemini API:", error);
+                    const connectErrorMessage = "Sorry, I couldn't connect to the assistant. Please check your network or API key.";
+                    appendMessage(connectErrorMessage, 'bot', true);
+                    chatHistory.push({ role: 'model', parts: [{ text: connectErrorMessage }] }); // Add error to history
                 }
             }
-            changeActiveLink(); // Call on load
-            window.addEventListener('scroll', changeActiveLink);
         }
 
     </script>
